@@ -1,0 +1,128 @@
+.item1 { grid-area: 1; 
+text-align: center;
+margin: 5px;
+border: 2px solid white}
+.item2 { grid-area: 2;
+    text-align: center }
+.item3 { grid-area: 3;
+    text-align: center }
+.item4 { grid-area: 4; }
+
+
+#OPP-R {
+    border: 2px solid white
+}
+#OPP-RM {
+    border: 2px solid white
+}
+#OPP-LM {
+    border: 2px solid white
+}
+#OPP-L {
+    border: 2px solid white
+}
+#PLAYSPACE {
+    border: 2px solid white
+}
+#PLAYERSPACE {
+    border: 2px solid white
+}
+
+
+
+
+#content {
+    margin-left: 350px;
+    position: absolute;
+    top:0;
+    left:0;
+}
+#text-content {
+    border: 2px solid white;
+    position: absolute;
+    top:0;
+    left:0;
+}
+#all {
+    background-color:black
+}
+.wrapper {
+    position: relative;
+    width: 1224px;
+    height: 700px;
+}
+ 
+.wrapper canvas {
+    position: absolute;
+    top:0;
+    left:0;
+}
+
+.wrapper2 {
+    position: relative;
+    width: 2000px;
+    height: 900px;
+}
+
+#PLAYER-HP {
+    border: 2px solid white;
+    margin: 5px;
+    width: 100px;
+    height: 100px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 60px;
+    color: white;
+}
+#OPP-HP {
+    border: 2px solid white;
+    margin: 5px;
+    width: 100px;
+    height: 100px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 60px;
+    color: white;
+}
+
+#PLAYER-NAME {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    width: 100px
+}
+
+#OPP-NAME {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    width: 100px
+}
+
+#Title {
+  
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    color: red;
+}
+
+#start {
+    width: 300px;
+    height: 50px;
+    border: 2px solid white;
+    color: yellow;
+    background-color: black;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    margin: 5px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-areas: 
+    '1'
+    '2'
+    '3'
+    '4'
+    ;
+}
