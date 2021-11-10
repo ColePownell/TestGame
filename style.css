@@ -7,7 +7,33 @@ border: 2px solid white}
 .item3 { grid-area: 3;
     text-align: center }
 .item4 { grid-area: 4; }
+.item5 { grid-area: 5;
+    text-align: center
+}
+.item6 { grid-area: 6; 
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 22px;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+}
 
+.r1 {
+    color: yellow;
+}
+.r3 {
+    color: red;
+}
+
+table, th, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+    margin: auto;
+  }
+
+  th, td {
+      padding: 7px;
+  }
 
 #OPP-R {
     border: 2px solid white
@@ -29,7 +55,16 @@ border: 2px solid white}
 }
 
 
+#right {
+    margin-left: 1600px;
+}
 
+
+#rightDisp {
+    position: absolute;
+    top:0px;
+    left:1239px;
+}
 
 #content {
     margin-left: 350px;
@@ -44,8 +79,11 @@ border: 2px solid white}
     left:0;
 }
 #all {
-    background-color:black
+    background-color:black;
 }
+
+
+
 .wrapper {
     position: relative;
     width: 1224px;
@@ -60,7 +98,7 @@ border: 2px solid white}
 
 .wrapper2 {
     position: relative;
-    width: 2000px;
+    width: 1900px;
     height: 900px;
 }
 
@@ -106,7 +144,7 @@ border: 2px solid white}
     color: red;
 }
 
-#start {
+#start, #next {
     width: 300px;
     height: 50px;
     border: 2px solid white;
@@ -115,6 +153,12 @@ border: 2px solid white}
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 30px;
     margin: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#next {
+    opacity: 0.6;
 }
 
 .grid-container {
@@ -124,5 +168,7 @@ border: 2px solid white}
     '2'
     '3'
     '4'
+    '5'
+    '6'
     ;
 }

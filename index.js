@@ -1,4 +1,4 @@
-
+var canvasDisp = document.getElementById("rightDisp")
 var canvas = document.getElementById("PLAYSPACE")
 var canvasP = document.getElementById("PLAYERSPACE")
 var canvasr = document.getElementById("OPP-R")
@@ -6,9 +6,11 @@ var canvasrm = document.getElementById("OPP-RM")
 var canvaslm = document.getElementById("OPP-LM")
 var canvasl = document.getElementById("OPP-L")
 var startBtn = document.getElementById("start")
+var nextBtn = document.getElementById("next")
 var PHP = document.getElementById("PLAYER-HP")
 var OHP = document.getElementById("OPP-HP")
 var ONAME = document.getElementById("OPP-NAME")
+let ctxDisp = canvasDisp.getContext('2d');
 let ctxp = canvasP.getContext('2d');
 let ctx = canvas.getContext('2d');
 let ctxr = canvasr.getContext('2d');
@@ -142,7 +144,7 @@ function checkDmg(randNum) {
             ctx.clearRect(0, 0, 1224, 700);
             ctxp.clearRect(0, 0, 1224, 700);
             ctx.drawImage(imgArray[2],0,0)
-
+            EnableSBTN()
         }
     }
 }
@@ -162,18 +164,48 @@ pls = {
     x: 7
 }
 DrawPlayer(plx,ply);
+DisableSBTN()
 })
 
-// Loads Default map and player
+nextBtn.addEventListener("click", function() {
+    DisableNBTN()
+})
+
+
+// Loads Default map and player with other on load things
+DisableNBTN()
 img.src = "./Images/Default.png";
 img.onload = () => {
 ctx.drawImage(img,0,0);
 img.src = "./Images/PlayerArt.png"
 img.onload = () => {
 ctxp.drawImage(img,612,300);
+img.src = "./Images/ColDisp.png"
+img.onload = () => {
+    ctxDisp.drawImage(img,0,0);
+}
 };
 };
 
+// diasable and enables fight and next buttons when needed
+function DisableSBTN() {
+    startBtn.disabled = true
+    document.getElementById("start").style.opacity = 0.6
+}
+function EnableSBTN() {
+    startBtn.disabled = false
+    document.getElementById("start").style.opacity = 1
+}
+
+function DisableNBTN() {
+    nextBtn.disabled = true
+    document.getElementById("next").style.opacity = 0.6
+}
+
+function EnableNBTN() {
+    nextBtn.disabled = false
+    document.getElementById("next").style.opacity = 1
+}
 
 
 
@@ -311,6 +343,7 @@ document.addEventListener("keydown", function(event) {
                     ctx.clearRect(0, 0, 1224, 700);
                     ctxp.clearRect(0, 0, 1224, 700);
                     ctx.drawImage(imgArray[3],0,0)
+                    EnableNBTN()
                 }
                 if (oppHP > 0){
                 oppMove()
