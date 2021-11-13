@@ -11,11 +11,27 @@ border: 2px solid white}
     text-align: center
 }
 .item6 { grid-area: 6; 
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: 22px;
-    color: white;
+    
     text-align: center;
-    margin-bottom: 20px;
+    
+}
+.item7 { grid-area: 7;
+    text-align: center
+}
+.item8 { grid-area: 8;
+    text-align: center
+}
+.item9 { grid-area: 9;
+    text-align: center
+}
+.item10 { grid-area: 10;
+    text-align: center
+}
+.item11 { grid-area: 11;
+    text-align: center
+}
+.item12 { grid-area: 12;
+    text-align: center
 }
 
 .r1 {
@@ -48,12 +64,27 @@ table, th, td {
     border: 2px solid white
 }
 #PLAYSPACE {
-    border: 2px solid white
+    border: 2px solid white;
+    
+    
 }
 #PLAYERSPACE {
     border: 2px solid white
 }
+#ATKSPACE {
+    border: 2px solid white
+}
 
+.LIST {
+    
+    color: orange;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+}
+
+#WORM {
+    color: yellow;
+}
 
 #right {
     margin-left: 1600px;
@@ -170,5 +201,11 @@ table, th, td {
     '4'
     '5'
     '6'
+    '7'
+    '8'
+    '9'
+    '10'
+    '11'
+    '12'
     ;
 }

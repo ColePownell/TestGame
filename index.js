@@ -1,6 +1,7 @@
-var canvasDisp = document.getElementById("rightDisp")
-var canvas = document.getElementById("PLAYSPACE")
-var canvasP = document.getElementById("PLAYERSPACE")
+var canvasDisp = document.getElementById("rightDisp") //art on the right
+var canvas = document.getElementById("PLAYSPACE") // where the basic board is
+var canvasP = document.getElementById("PLAYERSPACE") // where the player image is
+var canvasA = document.getElementById("ATKSPACE") //where opp attacks show up
 var canvasr = document.getElementById("OPP-R")
 var canvasrm = document.getElementById("OPP-RM")
 var canvaslm = document.getElementById("OPP-LM")
@@ -12,24 +13,26 @@ var OHP = document.getElementById("OPP-HP")
 var ONAME = document.getElementById("OPP-NAME")
 let ctxDisp = canvasDisp.getContext('2d');
 let ctxp = canvasP.getContext('2d');
+let ctxa = canvasA.getContext('2d')
 let ctx = canvas.getContext('2d');
 let ctxr = canvasr.getContext('2d');
 let ctxrm = canvasrm.getContext('2d');
 let ctxlm = canvaslm.getContext('2d');
 let ctxl = canvasl.getContext('2d');
+let fightNum = 1; // the number of fights
 let playerHP = 30
 let playerDmg = 4
 let oppHP = 0
 let tempArray = {}
 let tempString = ""
 let tempNum = 0
+let tempEl = 0
 let end = false; // is the game over
 let atkArray = {} // holds the arrays of cords of when attacks hit
 var img = new Image();
 var randNum = 0
 let oppArray = {} // opp info array
-let x = 102//temp used for making map img
-let y = 100 //temp used for making map img
+
 let canMove = true; // if the player has moved to recently
 let canAtk = true;
 let frame2 = false;
@@ -60,12 +63,15 @@ var opp = [
     },
     {
         "name": "dog",
-        "hp":"8",
-        "dmg":"2",
-        "atks":"2",
-        "file1":"./Images/wormatk1",
-        "file1b":"./Images/wormatk1b",
-        "atk1":"1,1:1,2:1,3:1,4:1,5:1,6:1,7"
+        "hp":20,
+        "dmg":5,
+        "atks":2,
+        "file1":"./Images/dogatk1.png",
+        "file1b":"./Images/dogatk1b.png",
+        "atk1":"10,1:11,1:12,1:10,2:11,2:12,2:8,2:9,2:8,3:9,3:10,3:10,12:11,12:12,12:10,11:11,11:12,11:8,11:9,11:8,10:9,10:10,10:6,3:7,3:6,4:7,4:8,4:6,5:7,5",
+        "file2":"./Images/dogatk2.png",
+        "file2b":"./Images/dogatk2b.png",
+        "atk2":"1,1:2,1:3,1:1,2:2,2:3,2:4,2:5,2:3,3:4,3:5,3:6,3:7,3:5,4:6,4:7,4:3,5:4,5:5,5:6,5:7,5:1,6:2,6:3,6:4,6:5,6:1,7:2,7:3,7"
     }
 ]
 
@@ -86,6 +92,8 @@ imgArray[2] = new Image();
 imgArray[2].src = "/Images/Gameover100.png"
 imgArray[3] = new Image();
 imgArray[3].src = "/Images/Win100.png"
+imgArray[4] = new Image();
+imgArray[4].src = "/Images/Default1.png"
 
 //starts the fight with the worm
 function wormFight() {
@@ -114,12 +122,42 @@ atkInt = setInterval(function() {
         ctx.drawImage(imgArrayWorm[randNum + oppArray.atks],0,0) // show when dmg happens
         
         atkresInt = setTimeout(function() {
-            ctx.drawImage(imgArray[0],0,0) //sets back to default background
+            ctx.drawImage(imgArray[4],0,0) //sets back to default background
         }, 200)// time damage stays on screen
         checkDmg(randNum) 
     }, 1500)// time till damage
 }, 3000); // time till next attack
+}
 
+function dogFight() {
+    loadDog()
+    //dog animation
+    aniInt=setInterval(function() {
+        canvasArray[oppLocation].clearRect(0, 0, 300, 200);
+    if(frame2 == true) {
+    canvasArray[oppLocation].drawImage(imgArrayDog[0],0,200,300,200,0,0,300,200)
+    frame2 = false;
+    } else
+    {
+        canvasArray[oppLocation].drawImage(imgArrayDog[0],0,0,300,200,0,0,300,200)
+        frame2 = true;
+    }
+    }, 700);
+    
+    //dog attack loop
+    atkInt = setInterval(function() {
+        randNum = (Math.floor(Math.random() * (oppArray.atks)) +1)
+        ctxa.drawImage(imgArrayDog[randNum],0,0) // warning dmg area
+        atkdmgInt = setTimeout(function() {
+            ctxa.clearRect(0, 0, 1224, 700);
+            ctxa.drawImage(imgArrayDog[randNum + oppArray.atks],0,0) // show when dmg happens
+            
+            atkresInt = setTimeout(function() {
+                ctxa.clearRect(0, 0, 1224, 700);
+            }, 200)// time damage stays on screen
+            checkDmg(randNum) 
+        }, 1000)// time till damage
+    }, 2500); // time till next attack
 }
 
 //checks to see if player is in a purple area
@@ -169,6 +207,67 @@ DisableSBTN()
 
 nextBtn.addEventListener("click", function() {
     DisableNBTN()
+    canvasArray[oppLocation].clearRect(0, 0, 300, 200);
+    fightNum++
+    ctx.clearRect(0, 0, 1224, 700);
+    ctxa.clearRect(0, 0, 1224, 700);
+    ctx.drawImage(imgArray[0],0,0)
+    plx = 612;
+    ply = 300;
+    pls = {
+    y: 4,
+    x: 7
+}
+end = false
+setCanMove()
+setCanAtk()
+console.log(fightNum)
+DrawPlayer(plx,ply);   
+    switch(fightNum) {
+        case 2:
+            dogFight()
+            document.getElementById("WORM").style.color = "red"
+            document.getElementById("WORM").innerHTML = "WORM"
+            document.getElementById("DOG").style.color = "yellow"
+            document.getElementById("DOG").innerHTML = "VS DOG"
+            break;
+        case 3:
+
+            document.getElementById("DOG").style.color = "red"
+            document.getElementById("DOG").innerHTML = "DOG"
+            document.getElementById("WARRIOR").style.color = "yellow"
+            document.getElementById("WARRIOR").innerHTML = "VS WARRIOR"
+            break;
+        case 4:
+
+            document.getElementById("WARRIOR").style.color = "red"
+            document.getElementById("WARRIOR").innerHTML = "WARRIOR"
+            document.getElementById("MAGE").style.color = "yellow"
+            document.getElementById("MAGE").innerHTML = "VS MAGE"
+            break;
+        case 5:
+         
+            document.getElementById("MAGE").style.color = "red"
+            document.getElementById("MAGE").innerHTML = "MAGE"
+            document.getElementById("BEAST").style.color = "yellow"
+            document.getElementById("BEAST").innerHTML = "VS BEAST"
+            break;
+        case 6:
+
+            document.getElementById("BEAST").style.color = "red"
+            document.getElementById("BEAST").innerHTML = "BEAST"
+            document.getElementById("CHAMPION").style.color = "yellow"
+            document.getElementById("CHAMPION").innerHTML = "VS CHAMPION"
+            break;
+        case 7:
+
+            document.getElementById("CHAMPION").style.color = "red"
+            document.getElementById("CHAMPION").innerHTML = "CHAMPION"
+            document.getElementById("?????").style.color = "yellow"
+            document.getElementById("?????").innerHTML = "VS ?????"
+            break;
+    }
+    
 })
 
 
@@ -182,7 +281,8 @@ img.onload = () => {
 ctxp.drawImage(img,612,300);
 img.src = "./Images/ColDisp.png"
 img.onload = () => {
-    ctxDisp.drawImage(img,0,0);
+ctxDisp.drawImage(img,0,0);
+
 }
 };
 };
@@ -224,6 +324,7 @@ document.addEventListener("keydown", function(event)
                 DrawPlayer(plx,ply);
                 canMove = false
                 setTimeout(function() {setCanMove()}, 300)
+                
             }
         }
     }
@@ -342,6 +443,7 @@ document.addEventListener("keydown", function(event) {
                     }
                     ctx.clearRect(0, 0, 1224, 700);
                     ctxp.clearRect(0, 0, 1224, 700);
+                    ctxa.clearRect(0, 0, 1224, 700);
                     ctx.drawImage(imgArray[3],0,0)
                     EnableNBTN()
                 }
@@ -371,7 +473,6 @@ function oppMove() {
 
 // enemmy loading arrays
 function loadWorm() {
-
 oppID = 0;
 oppArray = JSON.parse(JSON.stringify(opp[0])) //grabs opp info
 ONAME.textContent = oppArray.name
@@ -399,6 +500,36 @@ imgArrayWorm[4] = new Image();
 imgArrayWorm[4].src = oppArray.file2b
 }
 
+function loadDog() {
+imgArrayWorm = null
+oppID = 1;
+oppArray = JSON.parse(JSON.stringify(opp[1])) //grabs opp info
+ONAME.textContent = oppArray.name
+OHP.textContent = oppArray.hp
+oppHP = oppArray.hp
+atkArray = new Array(); // makes array of opp atack grids
+tempString = oppArray.atk1
+tempArray = tempString.split(":")
+atkArray[1] = tempArray
+
+tempString = oppArray.atk2
+tempArray = tempString.split(":")
+atkArray[2] = tempArray
+
+
+imgArrayDog = new Array();
+imgArrayDog[0] = new Image();
+imgArrayDog[0].src = "./Images/Dog.png"
+imgArrayDog[1] = new Image();
+imgArrayDog[1].src = oppArray.file1
+imgArrayDog[2] = new Image();
+imgArrayDog[2].src = oppArray.file2
+imgArrayDog[3] = new Image();
+imgArrayDog[3].src = oppArray.file1b
+imgArrayDog[4] = new Image();
+imgArrayDog[4].src = oppArray.file2b
+}
+
 
 // slows down the movement
 function setCanMove() {
@@ -420,9 +551,25 @@ function setCanAtk() {
 
 // setTimeout(function() {DrawSpace(file)}, 5000);
 // setTimeout(function() {DrawPlayer(plx,ply)}, 5000)
+let x = 102//temp used for making map img
+let y = 100 //temp used for making map img
+
+
 
 // ctx.fillStyle = 'purple';
-// ctx.fillRect(1122, 0, 1224, 700);
+// ctx.fillRect(918, 0, 306, 200);
+// ctx.fillRect(714, 100, 306, 200);
+// ctx.fillRect(918, 500, 306, 200);
+// ctx.fillRect(714, 400, 306, 200);
+// ctx.fillRect(510, 200, 306, 300);
+
+// ctx.fillRect(0, 0, 306, 200);
+// ctx.fillRect(204, 100, 306, 200);
+// ctx.fillRect(0, 500, 306, 200);
+// ctx.fillRect(204, 400, 306, 200);
+// ctx.fillRect(408, 200, 306, 300);
+
+
 // for(let i=0; i < 12; i++) {
 // ctx.beginPath();
 // ctx.strokeStyle = 'white';
