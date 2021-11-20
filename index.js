@@ -47,8 +47,12 @@ let pls = { // simple player location used for checking damage
 let atkInt = null // var for the attack loop
 let aniInt = null // var for animation loop
 let atkresInt = null // var for atk rest loop
+let atkresInt2 = null// for multistage attacks
+let atkresInt3 = null
 let atkdmgInt = null // var for damage loop
-var opp = [
+let atkdmgInt2 = null // for multistage attacks
+let atkdmgInt3 = null
+var opp = [ // data of all opp
     {   
     "name":"Worm",
     "hp":8,
@@ -72,6 +76,33 @@ var opp = [
         "file2":"./Images/dogatk2.png",
         "file2b":"./Images/dogatk2b.png",
         "atk2":"1,1:2,1:3,1:1,2:2,2:3,2:4,2:5,2:3,3:4,3:5,3:6,3:7,3:5,4:6,4:7,4:3,5:4,5:5,5:6,5:7,5:1,6:2,6:3,6:4,6:5,6:1,7:2,7:3,7"
+    },
+    {
+        "name": "warrior",
+        "hp":32,
+        "dmg":8,
+        "atks":3,
+        "file1":"./Images/warrioratk1.png",
+        "file1b":"./Images/warrioratk1b.png",
+        "atk1":"1,1:2,1:1,2:2,2:3:2:2,3:3,3:4,3:3,4:4,4:5,4:6,4:7,4:8,4:9,4:10,4:4,5:5,5:6,5:7,5:8,5:9,5:9,3:10,3:11,3:10,2:11,2:12,2:11,1:12,1",
+        "file2":"./Images/warrioratk2.png", // side attack
+        "file2b":"./Images/warrioratk2b.png",
+        "file2c":"./Images/warrioratk2c.png",
+        "file2d":"./Images/warrioratk2d.png",
+        "file2e":"./Images/warrioratk2e.png",
+        "file2f":"./Images/warrioratk2f.png",
+        "atk2":"1,1:1,2:1,3:1,4:1,5:1,6:1,7:12,1:12,2:12,3:12,4:12,5:12,6:12,7",
+        "atk2b":"2,1:2,2:2,3:2,4:2,5:2,6:2,7:11,1:11,2:11,3:11,4:11,5:11,6:11,7",
+        "atk2c":"3,1:3,2:3,3:3,4:3,5:3,6:3,7:10,1:10,2:10,3:10,4:10,5:10,6:10,7",
+        "file3":"./Images/warrioratk3.png", // top and bot attack
+        "file3b":"./Images/warrioratk3b.png",
+        "file3c":"./Images/warrioratk3c.png",
+        "file3d":"./Images/warrioratk3d.png",
+        "file3e":"./Images/warrioratk3e.png",
+        "file3f":"./Images/warrioratk3f.png",
+        "atk3":"1,1:2,1:3,1:4,1:5,1:6,1:7,1:8,1:9,1:10,1:11,1:12,1:1,12:2,12:3,12:4,12:5,12:6,12:7,12:8,12:9,12:10,12:11,12:12,12",
+        "atk3b":"1,2:2,2:3,2:4,2:5,2:6,2:7,2:8,2:9,2:10,2:11,2:12,2:1,11:2,11:3,11:4,11:5,11:6,11:7,11:8,11:9,11:10,11:11,11:12,11",
+        "atk3c":"1,3:2,3:3,3:4,3:5,3:6,3:7,3:8,3:9,3:10,3:11,3:12,3:1,10:2,10:3,10:4,10:5,10:6,10:7,10:8,10:9,10:10,10:11,10:12,10",
     }
 ]
 
@@ -93,9 +124,11 @@ imgArray[2].src = "/Images/Gameover100.png"
 imgArray[3] = new Image();
 imgArray[3].src = "/Images/Win100.png"
 imgArray[4] = new Image();
-imgArray[4].src = "/Images/Default1.png"
+imgArray[4].src = "/Images/Default1.png" // for the worm fight as it does not use the ctxa canvas becasue I put it in later
+imgArray[5] = new Image();
+imgArray[5].src = "/Images/Loading100.png"
 
-//starts the fight with the worm
+//starts the fight
 function wormFight() {
 loadWorm()
 //worm animation
@@ -160,6 +193,98 @@ function dogFight() {
     }, 2500); // time till next attack
 }
 
+function warriorFight() {
+    loadWarrior()
+    ctxp.drawImage(imgArray[5],0,0);
+    canMove = false
+setTimeout(function() {//loading time due to large array
+    canMove = true
+    DrawPlayer(plx, ply)
+    // warrior animation
+    aniInt=setInterval(function() {
+        canvasArray[oppLocation].clearRect(0, 0, 300, 200);
+    if(frame2 == true) {
+    canvasArray[oppLocation].drawImage(imgArrayWarrior[14],0,200,300,200,0,0,300,200)
+    frame2 = false;
+    } else
+    {
+        canvasArray[oppLocation].drawImage(imgArrayWarrior[14],0,0,300,200,0,0,300,200) // default img for warrior is at end of array not first... whoops
+        frame2 = true;
+    }
+    }, 700);
+
+    atkInt = setInterval(function() {
+    randNum = (Math.floor(Math.random() * (oppArray.atks)) +1)
+        switch(randNum) {
+            case 1:
+                ctxa.drawImage(imgArrayWarrior[0],0,0) // warning dmg area
+                atkdmgInt = setTimeout(function() {
+                    ctxa.clearRect(0, 0, 1224, 700);
+                    ctxa.drawImage(imgArrayWarrior[1],0,0) // show when dmg happens
+                    
+                    atkresInt = setTimeout(function() {
+                        ctxa.clearRect(0, 0, 1224, 700);
+                    }, 200)// time damage stays on screen
+                    checkDmg(randNum) 
+                }, 1000)// time till damage
+            break;
+            case 2:
+                ctxa.drawImage(imgArrayWarrior[2],0,0)
+                atkdmgInt = setTimeout(function() {
+                    checkDmg(2)
+                    ctxa.drawImage(imgArrayWarrior[3],0,0)
+                    atkresInt = setTimeout(function() {
+                        ctxa.clearRect(0, 0, 1224, 700);
+                        ctxa.drawImage(imgArrayWarrior[4],0,0)
+                        atkdmgInt2 = setTimeout(function() {
+                            checkDmg(3)
+                            ctxa.drawImage(imgArrayWarrior[5],0,0)
+                            atkresInt2 = setTimeout(function() {
+                                ctxa.clearRect(0, 0, 1224, 700);
+                                ctxa.drawImage(imgArrayWarrior[6],0,0)
+                                atkdmgInt3 = setTimeout(function() {
+                                    checkDmg(4)
+                                    ctxa.drawImage(imgArrayWarrior[7],0,0)
+                                    atkresInt2 = setTimeout(function() {
+                                        ctxa.clearRect(0, 0, 1224, 700);
+                                    },200)
+                                },600)
+                            }, 200)
+                        }, 600)
+                    }, 200)
+                },600)
+            break;
+            case 3:
+                ctxa.drawImage(imgArrayWarrior[8],0,0)
+                atkdmgInt = setTimeout(function() {
+                    checkDmg(5)
+                    ctxa.drawImage(imgArrayWarrior[9],0,0)
+                    atkresInt = setTimeout(function() {
+                        ctxa.clearRect(0, 0, 1224, 700);
+                        ctxa.drawImage(imgArrayWarrior[10],0,0)
+                        atkdmgInt2 = setTimeout(function() {
+                            checkDmg(6)
+                            ctxa.drawImage(imgArrayWarrior[11],0,0)
+                            atkresInt2 = setTimeout(function() {
+                                ctxa.clearRect(0, 0, 1224, 700);
+                                ctxa.drawImage(imgArrayWarrior[12],0,0)
+                                atkdmgInt3 = setTimeout(function() {
+                                    checkDmg(7)
+                                    ctxa.drawImage(imgArrayWarrior[13],0,0)
+                                    atkresInt2 = setTimeout(function() {
+                                        ctxa.clearRect(0, 0, 1224, 700);
+                                    },200)
+                                },600)
+                            }, 200)
+                        }, 600)
+                    }, 200)
+                },600)
+            break;
+        }
+    }, 3000);
+}, 3000) //loading time due to large array
+}
+
 //checks to see if player is in a purple area
 function checkDmg(randNum) {
     tempString = pls.x + "," + pls.y // makes player location in string
@@ -178,6 +303,8 @@ function checkDmg(randNum) {
                 clearInterval(aniInt)
                 clearInterval(atkdmgInt)
                 clearInterval(atkresInt)
+                clearInterval(atkdmgInt2)
+                clearInterval(atkdmgInt3)
             }
             ctx.clearRect(0, 0, 1224, 700);
             ctxp.clearRect(0, 0, 1224, 700);
@@ -205,6 +332,7 @@ DrawPlayer(plx,ply);
 DisableSBTN()
 })
 
+ //button to start the next fight
 nextBtn.addEventListener("click", function() {
     DisableNBTN()
     canvasArray[oppLocation].clearRect(0, 0, 300, 200);
@@ -224,7 +352,7 @@ setCanAtk()
 console.log(fightNum)
 DrawPlayer(plx,ply);   
     switch(fightNum) {
-        case 2:
+        case 2:  //start the next fight and change the look of the fight chart
             dogFight()
             document.getElementById("WORM").style.color = "red"
             document.getElementById("WORM").innerHTML = "WORM"
@@ -232,7 +360,7 @@ DrawPlayer(plx,ply);
             document.getElementById("DOG").innerHTML = "VS DOG"
             break;
         case 3:
-
+            warriorFight()
             document.getElementById("DOG").style.color = "red"
             document.getElementById("DOG").innerHTML = "DOG"
             document.getElementById("WARRIOR").style.color = "yellow"
@@ -391,13 +519,14 @@ document.addEventListener("keydown", function(event)
 }
 });
 
-// player attack, checks opp location
+// player attack, checks opp location and check player win
 document.addEventListener("keydown", function(event) {
     if (end == false) {
     if (event.key === 'e') 
     {
-        if(canAtk == true)
+        if(canMove == true)
         {
+            canMove = false
             switch(pls.x) { 
                 case 1:
                 case 2:
@@ -440,6 +569,8 @@ document.addEventListener("keydown", function(event) {
                         clearInterval(aniInt)
                         clearInterval(atkdmgInt)
                         clearInterval(atkresInt)
+                        clearInterval(atkdmgInt2)
+                        clearInterval(atkdmgInt3)
                     }
                     ctx.clearRect(0, 0, 1224, 700);
                     ctxp.clearRect(0, 0, 1224, 700);
@@ -451,7 +582,7 @@ document.addEventListener("keydown", function(event) {
                 oppMove()
                 }
             }
-            setTimeout(function() {setCanAtk()}, 500)
+            setTimeout(function() {setCanMove()}, 500)
         }
     }
 }
@@ -530,6 +661,75 @@ imgArrayDog[4] = new Image();
 imgArrayDog[4].src = oppArray.file2b
 }
 
+function loadWarrior() {
+    imgArrayDog = null;
+    oppID = 2;
+    oppArray = JSON.parse(JSON.stringify(opp[2])) //grabs opp info
+    ONAME.textContent = oppArray.name
+    OHP.textContent = oppArray.hp
+    oppHP = oppArray.hp
+atkArray = new Array(); // makes array of opp atack grids
+tempString = oppArray.atk1
+tempArray = tempString.split(":")
+atkArray[1] = tempArray
+
+tempString = oppArray.atk2
+tempArray = tempString.split(":")
+atkArray[2] = tempArray
+
+tempString = oppArray.atk2b
+tempArray = tempString.split(":")
+atkArray[3] = tempArray
+
+tempString = oppArray.atk2c
+tempArray = tempString.split(":")
+atkArray[4] = tempArray
+
+tempString = oppArray.atk3
+tempArray = tempString.split(":")
+atkArray[5] = tempArray
+
+tempString = oppArray.atk3b
+tempArray = tempString.split(":")
+atkArray[6] = tempArray
+
+tempString = oppArray.atk3c
+tempArray = tempString.split(":")
+atkArray[7] = tempArray
+
+imgArrayWarrior = new Array();
+imgArrayWarrior[0] = new Image();
+imgArrayWarrior[0].src = oppArray.file1
+imgArrayWarrior[1] = new Image();
+imgArrayWarrior[1].src = oppArray.file1b
+imgArrayWarrior[2] = new Image();
+imgArrayWarrior[2].src = oppArray.file2
+imgArrayWarrior[3] = new Image();
+imgArrayWarrior[3].src = oppArray.file2b
+imgArrayWarrior[4] = new Image();
+imgArrayWarrior[4].src = oppArray.file2c
+imgArrayWarrior[5] = new Image();
+imgArrayWarrior[5].src = oppArray.file2d
+imgArrayWarrior[6] = new Image();
+imgArrayWarrior[6].src = oppArray.file2e
+imgArrayWarrior[7] = new Image();
+imgArrayWarrior[7].src = oppArray.file2f
+imgArrayWarrior[8] = new Image();
+imgArrayWarrior[8].src = oppArray.file3
+imgArrayWarrior[9] = new Image();
+imgArrayWarrior[9].src = oppArray.file3b
+imgArrayWarrior[10] = new Image();
+imgArrayWarrior[10].src = oppArray.file3c
+imgArrayWarrior[11] = new Image();
+imgArrayWarrior[11].src = oppArray.file3d
+imgArrayWarrior[12] = new Image();
+imgArrayWarrior[12].src = oppArray.file3e
+imgArrayWarrior[13] = new Image();
+imgArrayWarrior[13].src = oppArray.file3f
+imgArrayWarrior[14] = new Image();
+imgArrayWarrior[14].src = "./Images/Warrior.png"
+}
+
 
 // slows down the movement
 function setCanMove() {
@@ -557,11 +757,14 @@ let y = 100 //temp used for making map img
 
 
 // ctx.fillStyle = 'purple';
-// ctx.fillRect(918, 0, 306, 200);
-// ctx.fillRect(714, 100, 306, 200);
-// ctx.fillRect(918, 500, 306, 200);
-// ctx.fillRect(714, 400, 306, 200);
-// ctx.fillRect(510, 200, 306, 300);
+// ctx.fillRect(0, 0, 204, 200);
+// ctx.fillRect(102, 100, 204, 200);
+// ctx.fillRect(204, 200, 204, 200);
+// ctx.fillRect(306, 300, 612, 200);
+// ctx.fillRect(1020, 0, 204, 200);
+// ctx.fillRect(918, 100, 204, 200);
+// ctx.fillRect(816, 200, 204, 200);
+
 
 // ctx.fillRect(0, 0, 306, 200);
 // ctx.fillRect(204, 100, 306, 200);
