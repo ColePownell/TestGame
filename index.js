@@ -36,7 +36,7 @@ let oppArray = {} // opp info array
 let canMove = true; // if the player has moved to recently
 let canAtk = true;
 let frame2 = false;
-let oppLocation = 0; // opp canvas location 0-3
+let oppLocation = 1; // opp canvas location 0-3
 let oppID = 0; // index in json of opp
 let plx = 612; //player location y
 let ply = 300; //player location x
@@ -44,7 +44,13 @@ let pls = { // simple player location used for checking damage
     y: 4,
     x: 7
 }
+let temppls = { // holding a flag of player lacation
+    y: 0,
+    x: 0
+}
+let movecount = 0
 let atkInt = null // var for the attack loop
+let atkInt2 = null
 let aniInt = null // var for animation loop
 let atkresInt = null // var for atk rest loop
 let atkresInt2 = null// for multistage attacks
@@ -100,10 +106,30 @@ var opp = [ // data of all opp
         "file3d":"./Images/warrioratk3d.png",
         "file3e":"./Images/warrioratk3e.png",
         "file3f":"./Images/warrioratk3f.png",
-        "atk3":"1,1:2,1:3,1:4,1:5,1:6,1:7,1:8,1:9,1:10,1:11,1:12,1:1,12:2,12:3,12:4,12:5,12:6,12:7,12:8,12:9,12:10,12:11,12:12,12",
-        "atk3b":"1,2:2,2:3,2:4,2:5,2:6,2:7,2:8,2:9,2:10,2:11,2:12,2:1,11:2,11:3,11:4,11:5,11:6,11:7,11:8,11:9,11:10,11:11,11:12,11",
-        "atk3c":"1,3:2,3:3,3:4,3:5,3:6,3:7,3:8,3:9,3:10,3:11,3:12,3:1,10:2,10:3,10:4,10:5,10:6,10:7,10:8,10:9,10:10,10:11,10:12,10",
-    }
+        "atk3":"1,1:2,1:3,1:4,1:5,1:6,1:7,1:8,1:9,1:10,1:11,1:12,1:1,7:2,7:3,7:4,7:5,7:6,7:7,7:8,7:9,7:10,7:11,7:12,7",
+        "atk3b":"1,2:2,2:3,2:4,2:5,2:6,2:7,2:8,2:9,2:10,2:11,2:12,2:1,6:2,6:3,6:4,6:5,6:6,6:7,6:8,6:9,6:10,6:11,6:12,6",
+        "atk3c":"1,3:2,3:3,3:4,3:5,3:6,3:7,3:8,3:9,3:10,3:11,3:12,3:1,5:2,5:3,5:4,5:5,5:6,5:7,5:8,5:9,5:10,5:11,5:12,5",
+    },
+    {
+        "name": "Mage",
+        "hp":20,
+        "dmg":5,
+        "atks":3,
+        "file1":"./Images/Mageatk1.png",
+        "file1b":"./Images/Mageatk1b.png",
+        "file1c":"./Images/Mageatk1c.png",
+        "file1d":"./Images/Mageatk1d.png",
+        "atk1":"10,1:11,1:12,1:10,2:11,2:12,2:8,2:9,2:8,3:9,3:10,3:10,12:11,12:12,12:10,11:11,11:12,11:8,11:9,11:8,10:9,10:10,10:6,3:7,3:6,4:7,4:8,4:6,5:7,5",
+        "atk1b":"10,1:11,1:12,1:10,2:11,2:12,2:8,2:9,2:8,3:9,3:10,3:10,12:11,12:12,12:10,11:11,11:12,11:8,11:9,11:8,10:9,10:10,10:6,3:7,3:6,4:7,4:8,4:6,5:7,5",
+        "file2":"./Images/mageatk2.png", 
+        "file2b":"./Images/mageatk2b.png",// only file needed as atacks follow player or opp
+        "file3":"./Images/mageatk3.png",
+        "file3b":"./Images/mageatk3b.png",
+        "atk3":"10,1:11,1:12,1:10,2:11,2:12,2:8,2:9,2:8,3:9,3:10,3:10,12:11,12:12,12:10,11:11,11:12,11:8,11:9,11:8,10:9,10:10,10:6,3:7,3:6,4:7,4:8,4:6,5:7,5",
+        "atk3b":"10,1:11,1:12,1:10,2:11,2:12,2:8,2:9,2:8,3:9,3:10,3:10,12:11,12:12,12:10,11:11,11:12,11:8,11:9,11:8,10:9,10:10,10:6,3:7,3:6,4:7,4:8,4:6,5:7,5",
+        "atk3c":"10,1:11,1:12,1:10,2:11,2:12,2:8,2:9,2:8,3:9,3:10,3:10,12:11,12:12,12:10,11:11,11:12,11:8,11:9,11:8,10:9,10:10,10:6,3:7,3:6,4:7,4:8,4:6,5:7,5",
+        "atk3d":"10,1:11,1:12,1:10,2:11,2:12,2:8,2:9,2:8,3:9,3:10,3:10,12:11,12:12,12:10,11:11,11:12,11:8,11:9,11:8,10:9,10:10,10:6,3:7,3:6,4:7,4:8,4:6,5:7,5",
+    },
 ]
 
 //creates array of opp location cavases
@@ -285,11 +311,137 @@ setTimeout(function() {//loading time due to large array
 }, 3000) //loading time due to large array
 }
 
+function mageFight() {
+loadMage()
+aniInt=setInterval(function() {
+    canvasArray[oppLocation].clearRect(0, 0, 300, 200);
+if(frame2 == true) {
+canvasArray[oppLocation].drawImage(imgArrayMage[0],0,200,300,200,0,0,300,200)
+frame2 = false;
+} else
+{
+    canvasArray[oppLocation].drawImage(imgArrayMage[0],0,0,300,200,0,0,300,200)
+    frame2 = true;
+}
+}, 700);
+
+atkInt = setInterval(function() {
+randNum = (Math.floor(Math.random() * (oppArray.atks)) +1)
+console.log(randNum)
+console.log(oppLocation)
+switch(randNum) {
+case 1:
+    ctxa.drawImage(imgArrayMage[1],0,0)// show outter warn area
+atkdmgInt = setTimeout(function() {
+    ctxa.drawImage(imgArrayMage[3],0,0) // show inner square warn area
+atkdmgInt2 = setTimeout(function() {
+    ctxa.drawImage(imgArrayMage[2],0,0) // outer damage ring
+    if(pls.x == 1 || pls.x == 2 || pls.x == 12 || pls.x == 11 || pls.y == 1 || pls.y == 2 || pls.y == 7 || pls.y == 6) {
+    checkDmg(15)
+    }
+atkdmgInt3 = setTimeout(function() {
+    ctxa.clearRect(0, 0, 1224, 700);
+    ctxa.drawImage(imgArrayMage[3],0,0)
+atkresInt = setTimeout(function() {
+    ctxa.drawImage(imgArrayMage[4],0,0)
+    if((pls.x == 3 || pls.x == 4 || pls.x == 5 || pls.x==6 || pls.x==7||pls.x==8||pls.x==9||pls.x==10) && (pls.y == 3 || pls.y==4 || pls.y==5)) {
+    checkDmg(15)
+    }
+atkresInt2 = setTimeout(function() {
+    ctxa.clearRect(0, 0, 1224, 700);
+atkresInt3 = setTimeout(function() {
+    //just more rest time
+},500)
+},200)
+},700)
+},200)
+},300)
+},600)
+
+
+ break;
+case 2:
+// seperate
+switch(oppLocation) {
+case 0:
+    ctxa.drawImage(imgArrayMage[7],0,0)
+    atkdmgInt = setTimeout(function() {
+    ctxa.drawImage(imgArrayMage[8],0,0)
+if(pls.x == 1 || pls.x == 2 || pls.x == 3) {
+    checkDmg(15)
+}
+    atkresInt = setTimeout(function() {
+    ctxa.clearRect(0, 0, 1224, 700);
+    },200)
+    },1000)
+break;
+case 1:
+    ctxa.drawImage(imgArrayMage[7],306,0)
+    atkdmgInt = setTimeout(function() {
+    ctxa.drawImage(imgArrayMage[8],306,0)
+    if(pls.x == 4 || pls.x == 5 || pls.x == 6) {
+        checkDmg(15)
+    }
+    atkresInt = setTimeout(function() {
+    ctxa.clearRect(0, 0, 1224, 700);
+    },200)
+    },1000)
+break;
+case 2:
+    ctxa.drawImage(imgArrayMage[7],612,0)
+    atkdmgInt = setTimeout(function() {
+    ctxa.drawImage(imgArrayMage[8],612,0)
+    if(pls.x == 7 || pls.x == 8 || pls.x == 9) {
+        checkDmg(15)
+    }
+    atkresInt = setTimeout(function() {
+    ctxa.clearRect(0, 0, 1224, 700);
+    },200)
+    },1000)
+break;
+case 3:
+    ctxa.drawImage(imgArrayMage[7],918,0)
+    atkdmgInt = setTimeout(function() {
+    ctxa.drawImage(imgArrayMage[8],918,0)
+    if(pls.x == 10 || pls.x == 11 || pls.x == 12) {
+        checkDmg(15)
+    }
+    atkresInt = setTimeout(function() {
+    ctxa.clearRect(0, 0, 1224, 700);
+    },200)
+    },1000)
+break;
+
+}
+// seperate
+break;
+case 3:
+    movecount = 0
+    temppls.x = plx
+    temppls.y= ply
+    ctxa.drawImage(imgArrayMage[5],plx - 102,ply-100)
+    atkresInt = setTimeout(function() {
+        ctxa.drawImage(imgArrayMage[6],temppls.x - 102,temppls.y-100)
+        if(movecount <2 || (temppls.x == plx && temppls.y == ply)) {
+        checkDmg(15) // atack array 15 is an always hit
+        }
+        atkresInt = setTimeout(function() {
+        
+        ctxa.clearRect(0, 0, 1224, 700);
+        },200)
+    }, 1100)
+    
+break;
+}
+}, 3000)
+}
+
 //checks to see if player is in a purple area
 function checkDmg(randNum) {
+    
     tempString = pls.x + "," + pls.y // makes player location in string
     tempArray = atkArray[randNum] 
-    if (tempArray.includes(tempString) == true)
+    if (tempArray.includes(tempString) == true ||tempArray.includes("13,13") == true )
     {
         playerHP = playerHP - oppArray.dmg //update player hp
         PHP.textContent = playerHP
@@ -305,6 +457,8 @@ function checkDmg(randNum) {
                 clearInterval(atkresInt)
                 clearInterval(atkdmgInt2)
                 clearInterval(atkdmgInt3)
+                clearInterval(atkresInt2)
+                clearInterval(atkresInt3)
             }
             ctx.clearRect(0, 0, 1224, 700);
             ctxp.clearRect(0, 0, 1224, 700);
@@ -349,7 +503,6 @@ nextBtn.addEventListener("click", function() {
 end = false
 setCanMove()
 setCanAtk()
-console.log(fightNum)
 DrawPlayer(plx,ply);   
     switch(fightNum) {
         case 2:  //start the next fight and change the look of the fight chart
@@ -367,7 +520,7 @@ DrawPlayer(plx,ply);
             document.getElementById("WARRIOR").innerHTML = "VS WARRIOR"
             break;
         case 4:
-
+            mageFight()
             document.getElementById("WARRIOR").style.color = "red"
             document.getElementById("WARRIOR").innerHTML = "WARRIOR"
             document.getElementById("MAGE").style.color = "yellow"
@@ -452,6 +605,7 @@ document.addEventListener("keydown", function(event)
                 DrawPlayer(plx,ply);
                 canMove = false
                 setTimeout(function() {setCanMove()}, 300)
+                movecount++
                 
             }
         }
@@ -473,6 +627,7 @@ document.addEventListener("keydown", function(event)
                 DrawPlayer(plx,ply);
                 canMove = false
                 setTimeout(function() {setCanMove()}, 300)
+                movecount++
             }
         }
     }
@@ -493,6 +648,7 @@ document.addEventListener("keydown", function(event)
                 DrawPlayer(plx,ply);
                 canMove = false
                 setTimeout(function() {setCanMove()}, 300)
+                movecount++
             }
         }
     }
@@ -513,6 +669,7 @@ document.addEventListener("keydown", function(event)
                 DrawPlayer(plx,ply);
                 canMove = false
                 setTimeout(function() {setCanMove()}, 300)
+                movecount++
             }
         }
     }
@@ -571,6 +728,8 @@ document.addEventListener("keydown", function(event) {
                         clearInterval(atkresInt)
                         clearInterval(atkdmgInt2)
                         clearInterval(atkdmgInt3)
+                        clearInterval(atkresInt2)
+                        clearInterval(atkresInt3)
                     }
                     ctx.clearRect(0, 0, 1224, 700);
                     ctxp.clearRect(0, 0, 1224, 700);
@@ -730,6 +889,60 @@ imgArrayWarrior[14] = new Image();
 imgArrayWarrior[14].src = "./Images/Warrior.png"
 }
 
+function loadMage() {
+    imgArrayWarrior = null
+    oppID = 3;
+    oppArray = JSON.parse(JSON.stringify(opp[3])) //grabs opp info
+    ONAME.textContent = oppArray.name
+    OHP.textContent = oppArray.hp
+    oppHP = oppArray.hp
+    tempString = oppArray.atk1
+    tempArray = tempString.split(":")
+    atkArray[1] = tempArray
+
+    tempString = oppArray.atk1b
+    tempArray = tempString.split(":")
+    atkArray[2] = tempArray
+
+    tempString = oppArray.atk3
+    tempArray = tempString.split(":")
+    atkArray[3] = tempArray
+
+    tempString = oppArray.atk3b
+    tempArray = tempString.split(":")
+    atkArray[4] = tempArray
+    tempString = oppArray.atk3c
+    tempArray = tempString.split(":")
+    atkArray[5] = tempArray
+
+    tempString = oppArray.atk3d
+    tempArray = tempString.split(":")
+    atkArray[6] = tempArray
+
+    atkArray[15] = "13,13"
+
+    imgArrayMage = new Array()
+    imgArrayMage[0] = new Image();
+    imgArrayMage[0].src = "./Images/Mage.png"
+    imgArrayMage[1] = new Image();
+    imgArrayMage[1].src = oppArray.file1
+    imgArrayMage[2] = new Image();
+    imgArrayMage[2].src = oppArray.file1b
+    imgArrayMage[3] = new Image();
+    imgArrayMage[3].src = oppArray.file1c
+    imgArrayMage[4] = new Image();
+    imgArrayMage[4].src = oppArray.file1d
+    imgArrayMage[5] = new Image();
+    imgArrayMage[5].src = oppArray.file2
+    imgArrayMage[6] = new Image();
+    imgArrayMage[6].src = oppArray.file2b
+    imgArrayMage[7] = new Image();
+    imgArrayMage[7].src = oppArray.file3
+    imgArrayMage[8] = new Image();
+    imgArrayMage[8].src = oppArray.file3b
+}
+
+
 
 // slows down the movement
 function setCanMove() {
@@ -757,8 +970,7 @@ let y = 100 //temp used for making map img
 
 
 // ctx.fillStyle = 'purple';
-// ctx.fillRect(0, 0, 204, 200);
-// ctx.fillRect(102, 100, 204, 200);
+// ctx.fillRect(204, 200, 816, 300);
 // ctx.fillRect(204, 200, 204, 200);
 // ctx.fillRect(306, 300, 612, 200);
 // ctx.fillRect(1020, 0, 204, 200);
